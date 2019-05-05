@@ -76,8 +76,10 @@ public:
     forwardMemberFunction(reserve,       reserve,          (void),              )
     forwardMemberFunction(begin,         begin,            ,                    )
     forwardMemberFunction(begin,         begin,            ,               const)
+    forwardMemberFunction(cbegin,        cbegin,           ,               const)
     forwardMemberFunction(end,           end,              ,                    )
     forwardMemberFunction(end,           end,              ,               const)
+    forwardMemberFunction(cend,          cend,             ,               const)
     forwardMemberFunction(findLastNotOf, find_last_not_of, ,                    )
     forwardMemberFunction(findLastOf,    find_last_of,     ,                    )
     forwardMemberFunction(getData,       c_str,            ,               const)
@@ -136,6 +138,47 @@ public:
         }
 
         return result;
+    }
+
+    // Get a escaped string like Node.js's util.inspect(str).
+    StringEx inspect() const {
+        StringEx result;
+        for (char ch : data) {
+            switch (ch) {
+            case '"': result.append("\\\""); break;
+            case '\?': result.append("\\?"); break;
+            case '\\': result.append("\\\\"); break;
+            case '\a': result.append("\\a"); break;
+            case '\b': result.append("\\b"); break;
+            case '\f': result.append("\\f"); break;
+            case '\n': result.append("\\n"); break;
+            case '\r': result.append("\\r"); break;
+            case '\t': result.append("\\t"); break;
+            case '\v': result.append("\\v"); break;
+            default: result.append(1, ch);
+            }
+        }
+        return '"' + result + '"';
+    }
+
+    StringEx trimLeft() const {
+        for (std::string::const_iterator it = data.cbegin(); it != data.cend(); it++) {
+            if (!isspace(*it)) return StringEx(it, data.cend());
+        }
+
+        return "";
+    }
+
+    StringEx trimRight() const {
+        for (std::string::const_reverse_iterator it = data.crbegin(); it != data.crend(); it++) {
+            if (!isspace(*it)) return StringEx(data.cbegin(), ++it.base());
+        }
+
+        return "";
+    }
+
+    StringEx trim() const {
+        return trimLeft().trimRight();
     }
 };
 

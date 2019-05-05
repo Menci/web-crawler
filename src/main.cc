@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
 
     Crawler crawler(
         arguments.rootUrl,
+        arguments.useRegex,
         arguments.crawlingRegex,
         arguments.suffixBlackList.split(','),
         arguments.outputDirectory,

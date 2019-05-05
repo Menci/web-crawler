@@ -8,6 +8,7 @@ struct Arguments {
     StringEx rootUrl;
     StringEx outputDirectory;
     StringEx suffixBlackList;
+    bool useRegex;
     StringEx crawlingRegex;
     StringEx indexSaveFilename;
     RequestOptions requestOptions;

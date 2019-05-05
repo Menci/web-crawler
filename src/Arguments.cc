@@ -38,6 +38,10 @@ Arguments parseArguments(int argc, char *argv[]) {
                    "The filename used when saving a directory's index page.",
                    ArgumentParser::stringParser(arguments.indexSaveFilename),
                    true, "index.html")
+        .addOption("use-regex", "R", "",
+                   "Use regex instead of HTMLParser to get a page's next URLs to crawl.",
+                   ArgumentParser::boolParser(arguments.useRegex),
+                   true)
         .addOption("crawling-regex", "r", "regex",
                    "The regex used to find a page's next URLs to crawl, matches case-insensitive. First non-empty capture group's value is used.",
                    ArgumentParser::stringParser(arguments.crawlingRegex),

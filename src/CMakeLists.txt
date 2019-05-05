@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.0)
 project(crawler CXX)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -19,4 +18,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB SRC "*.cc")
 add_executable(crawler ${SRC})
-target_link_libraries(crawler stdc++fs)
+
+target_link_libraries(crawler stdc++fs htmlparser)

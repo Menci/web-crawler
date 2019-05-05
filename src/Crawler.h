@@ -11,6 +11,7 @@
 
 class Crawler {
     Url rootUrl;
+    bool useRegex;
     std::regex crawlingRegex;
     std::vector<StringEx> suffixBlackList;
     StringEx saveDirectory;
@@ -50,12 +51,14 @@ public:
 
     Crawler(
         const Url &rootUrl,
+        bool useRegex,
         const StringEx &crawlingRegex,
         const std::vector<StringEx> &suffixBlackList,
         const StringEx &saveDirectory,
         const StringEx &indexSaveFilename,
         const RequestOptions &requestOptions
     ) : rootUrl(rootUrl),
+        useRegex(useRegex),
         crawlingRegex((std::string)crawlingRegex, std::regex_constants::icase),
         suffixBlackList(suffixBlackList),
         saveDirectory(saveDirectory),

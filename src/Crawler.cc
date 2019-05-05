@@ -1,7 +1,10 @@
+#include "Crawler.h"
+
 #include <regex>
 #include <filesystem>
 #include <fstream>
-#include "Crawler.h"
+
+#include "htmlparser/HTMLDocument.h"
 
 bool Crawler::checkDuplicate(const Url &url) {
     const StringEx str = url.toString();
@@ -26,15 +29,24 @@ bool Crawler::checkFiltered(const Url &newUrl) {
 }
 
 void Crawler::extractUrls(const StringEx &str, const std::function<void(const StringEx&)> &callback) {
-    for (std::sregex_iterator it(str.begin(), str.end(), crawlingRegex); it != std::sregex_iterator(); it++) {
-        auto &match = *it;
+    if (useRegex) {
+        for (std::sregex_iterator it(str.begin(), str.end(), crawlingRegex); it != std::sregex_iterator(); it++) {
+            auto &match = *it;
 
-        for (size_t i = 1; i < match.size(); i++) {
-            StringEx str = match[i];
-            if (str.length()) {
-                callback(str);
-                break;
+            for (size_t i = 1; i < match.size(); i++) {
+                StringEx str = match[i];
+                if (str.length()) {
+                    callback(str);
+                    break;
+                }
             }
+        }
+    } else {
+        HTMLDocument document(str);
+        const std::vector<HTMLDocument::Element> links = document.getElementsByTagName("a");
+        for (auto a : links) {
+            StringEx href = a.getAttribute("href");
+            if (!href.empty()) callback(href);
         }
     }
 }
@@ -62,7 +74,7 @@ void Crawler::crawlUrl(const Url &url) {
         // If redirected URL is filtered, ignore it.
         if (this->checkFiltered(redirectedUrl)) {
             if (this->onResponseIgnored) {
-                this->onResponseIgnored(url, redirectedUrl, "Redirected URL filtered out.");
+                this->onResponseIgnored(url, redirectedUrl, "Redirected URL filtered out");
             }
             return;
         }

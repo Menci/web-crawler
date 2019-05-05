@@ -74,6 +74,14 @@ public:
         };
     }
 
+    static ParserFunction boolParser(bool &var) {
+        var = false;
+        return [=, &var](const StringEx &str) -> std::optional<StringEx> {
+            var = true;
+            return std::nullopt;
+        };
+    }
+
     ArgumentParser &setProgramDescription(const StringEx &programDescription);
     ArgumentParser &addOption(const StringEx &name,
                               const StringEx &alias,

@@ -31,6 +31,7 @@ ArgumentParser &ArgumentParser::addOption(const StringEx &name,
     arg->description = description;
     arg->parserFunction = parserFunction;
     arg->optional = optional;
+    arg->specfied = false;
     arg->defaultValue = defaultValue;
 
     mapNameArgument[name] = arg;
@@ -56,6 +57,7 @@ ArgumentParser &ArgumentParser::addPositional(const StringEx &valueName,
     arg.description = description;
     arg.parserFunction = parserFunction;
     arg.optional = optional;
+    arg.specfied = false;
     arg.defaultValue = defaultValue;
 
     positionalArguments.push_back(arg);
@@ -220,6 +222,7 @@ ArgumentParser &ArgumentParser::parse() {
             arg->specfied = true;
             if (arg->valueName.length() == 0) {
                 // Only option, no value.
+                if (arg->parserFunction) arg->parserFunction("");
                 continue;
             }
 
@@ -260,7 +263,7 @@ ArgumentParser &ArgumentParser::parse() {
 
     // argv processed, use default value for non-specfied.
     auto useDefaultValueForUnspecfied = [&](Argument &arg, bool isOption) {
-        if (!arg.specfied) {
+        if (!arg.specfied && !arg.valueName.empty()) {
             if (!arg.optional) {
                 if (isOption) {
                     raiseError("Missing value for non-optional option: --" + arg.name + ".");
